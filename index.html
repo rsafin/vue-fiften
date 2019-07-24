@@ -39,19 +39,26 @@
 
         let vm = new Vue({
             el: '#fiften',
-            data: {
-                row: 4,
-                grid: []
-            },
-            mounted: function() {
-                for (var i = 0; i < this.row * this.row; i++) {
-                    this.grid.push(i);
+
+            data: function() {
+                
+                var grid = [];
+                var row = 4;
+
+                for (var i = 0; i < row * row; i++) {
+                    grid.push(i);
                 }
 
-                this.grid = this.shaffle(this.grid);
+                grid = this.shuffle(grid);
+
+                return {
+                    row: row,
+                    grid: grid
+                }
             },
+
             methods: {
-                shaffle: function (grid){
+                shuffle: function (grid){
                     for(var j, x, i = grid.length; i; ){
                         j = Math.floor(Math.random() * i);
                         x = grid[--i];
