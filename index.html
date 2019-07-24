@@ -81,11 +81,7 @@
                 },
 
                 getZeroPosition: function() {
-                    for(var i = 0; i < this.grid.length; i++  ) {
-                        if (this.grid[i] == 0) {
-                            return i;
-                        }
-                    }
+                    return this.grid.indexOf(0)
                 },
 
                 isCompleted: function() {
