@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My first Vue app</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="fiften" >
+        <grid-cell
+            @move-cell="move"
+            v-show='cell !== 0'
+            v-for='(cell, index) in grid'
+            :row='row'
+            :content='cell'
+            :index='index'
+            :key='cell.index'
+        ></grid-cell>
+    </div>
+    
+    <script>
+        Vue.component('grid-cell', {
+            template: '<div class="cell btn btn-default" :style="position" @click="$emit(\'move-cell\', index)">{{ content }}</div>',
+            data: function() {
+                return {
+                    position: {
+                        top: '0px',
+                        left: '0px'
+                    }
+                }
+            },  
+            props: ['content', 'index','row'],
+            mounted: function() {
+                this.position.top = parseInt(this.index / this.row) * 60 + 10 + 'px';
+                this.position.left = parseInt(this.index % this.row) * 60 + 10 + 'px';
+            }
+        });
+
+        let vm = new Vue({
+            el: '#fiften',
+            data: {
+                row: 4,
+                grid: []
+            },
+            mounted: function() {
+                for (var i = 0; i < this.row * this.row; i++) {
+                    this.grid.push(i);
+                }
+
+                this.grid = this.shaffle(this.grid);
+            },
+            methods: {
+                shaffle: function (grid){
+                    for(var j, x, i = grid.length; i; ){
+                        j = Math.floor(Math.random() * i);
+                        x = grid[--i];
+
+                        Vue.set(grid, i, grid[j]);
+                        Vue.set(grid, j, x);
+                    };
+                    return grid;
+                },
+
+                move: function(cell) {
+                    zero = this.getZeroPosition()
+                    if ((cell < this.grid.length) && (cell >= 0)) {
+                        if (zero != cell) {
+                            if (Math.abs(zero - cell) == 1 || Math.abs(zero - cell) == this.row) {
+                                this.swap(cell, zero);
+                                if (this.isCompleted()) alert('You are win!');
+                            }
+                        }
+                    }
+                },
+
+                swap: function(cellA, cellB) {
+                    let t = this.grid[cellA];
+                    Vue.set(this.grid, cellA, this.grid[cellB]);
+                    Vue.set(this.grid, cellB, t);
+                },
+
+                getZeroPosition: function() {
+                    for(var i = 0; i < this.grid.length; i++  ) {
+                        if (this.grid[i] == 0) {
+                            return i;
+                        }
+                    }
+                },
+
+                isCompleted: function() {
+                    for(var i = 0; i < this.grid.length - 1; i++) {
+                        if (this.grid[i] != i + 1 ) return false;
+                    }
+                    return true;
+                },
+            }
+        }); 
+    </script>
+</body>
+</html>
